@@ -1,7 +1,7 @@
 # FUNPAY-API | [FunPay](https://funpay.com/) API
 ## Installation
 ```bash
-npm i lzt-api
+npm i funpay-api
 ```
 ## Usage
 ```ts
