@@ -1,0 +1,23 @@
+{
+    "name": "funpay-api",
+    "version": "1.0.0",
+    "description": "API for FunPay",
+    "type": "module",
+    "main": "dist/index.js",
+    "exports": "./dist/index.js",
+    "scripts": {
+        "start": "npm run build && node ./dist/index.js",
+        "dev": "nodemon --exec npm start ts-node ./src/index.ts",
+        "build": "tsc --build tsconfig.json"
+    },
+    "author": "twentytwo777",
+    "license": "MIT",
+    "dependencies": {
+        "axios": "^1.4.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.5.2",
+        "nodemon": "^3.0.1",
+        "ts-node": "^10.9.1"
+    }
+}

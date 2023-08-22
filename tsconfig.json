@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "ES2022",
+        "target": "ES2022",
+        "moduleResolution": "Node",
+        "outDir": "dist",
+        "typeRoots": [ "node_modules/@types" ],
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "isolatedModules": false,
+        /* Linting */
+        "strict": true,
+        "noImplicitAny": true,
+        "useUnknownInCatchVariables": false,
+        "resolveJsonModule": true,
+        "inlineSourceMap": true,
+        "removeComments": true
+    },
+    "ts-node": {
+        "esm": true
+    },
+    "lib": [ "esnext" ],
+    "include": [ "src/**/*" ],
+    "exclude": [ "node_modules", "dist" ]
+}
