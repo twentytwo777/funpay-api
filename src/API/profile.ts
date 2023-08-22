@@ -104,14 +104,12 @@ class FunPayProfile {
                 ...this.headers
             }
         });
+
+        const hasBalance = data.match(/<span class="badge badge-balance">(.*)<\/span>/);
+        const balance = hasBalance ? parseInt(hasBalance[1].replace(/\s+/g, ''), 10) : 0;
         
-        return parseInt(data.match(/<span class="badge badge-balance">(.*)<\/span>/)[1].replace(/\s+/g, ''), 10);
+        return balance;
     };
 };
-
-(async () => {
-    const a = new FunPayProfile('cmus9vdk5wr7eiy5gd8l9njvd6bhwzz4');
-    console.log(await a.getProfile());
-})()
 
 export default FunPayProfile;
