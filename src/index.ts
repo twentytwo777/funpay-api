@@ -1,5 +1,6 @@
 // Imports
 import FunPayProfile from './API/profile.js';
+import FunPayPurchases from './API/purchases.js';
 
 /**
     * @class FunPayAPI
@@ -8,9 +9,11 @@ import FunPayProfile from './API/profile.js';
 */
 class FunPayAPI {
     public Profile: FunPayProfile;
+    public Purchases: FunPayPurchases;
 
-    constructor(token: string) {
+    constructor(private token: string) {
         this.Profile = new FunPayProfile(token);
+        this.Purchases = new FunPayPurchases(token);
     };
 };
 

@@ -1,5 +1,6 @@
 // Imports
 import axios from 'axios';
+import { isTokenValid, getAccountCredentials } from '../util.js';
 import { APIFunPayUrls } from '../enums/funpay.js';
 import { FunPayProfileType } from '../@types/profile.js';
 
@@ -9,24 +10,8 @@ import { FunPayProfileType } from '../@types/profile.js';
     * @param {string} token - FunPay API token
 */
 class FunPayProfile {
-    private headers: object;
-
     constructor(private token: string) {
         this.token = token;
-        this.headers = {
-            Cookie: `golden_key=${this.token}`
-        };
-    };
-
-    private async isTokenValid(): Promise<boolean> {
-        const { data } = await axios.get(APIFunPayUrls.getIdProfile, {
-            headers: {
-                ...this.headers
-            }
-        });
-
-        const hasId = data.match(/<a href="https:\/\/funpay.com\/users\/(.*)\/" class="user-link-dropdown">/g);
-        return !!hasId;
     };
 
     /**
@@ -35,21 +20,10 @@ class FunPayProfile {
         * @returns {Promise<FunPayProfileType>} Profile
     **/
     public async getProfile(): Promise<FunPayProfileType> {
-        const tokenValid = await this.isTokenValid();
-        if (!tokenValid)
-            throw new Error('Invalid token');
-
-        const { data } = await axios.get(APIFunPayUrls.getIdProfile, {
-            headers: {
-                ...this.headers
-            }
-        });
+        const littleInfo = await getAccountCredentials(this.token);
+        const link = `https://funpay.com/users/${littleInfo.id}/`;
         
-        const id = data.match(/<a href="https:\/\/funpay.com\/users\/(.*)\/" class="user-link-dropdown">/g)[0].match(/\/users\/(.*)\//g)[0].replace(/\/users\/|\/|"/g, '');
-        const link = `https://funpay.com/users/${id}/`;
-        const name = data.match(/<div class="user-link-name">(.*)<\/div>/g)[0].match(/>(.*)</g)[0].replace(/<|>/g, '');
-        
-        const getProfile = await axios.get(`${APIFunPayUrls.getProfile}${id}/`);
+        const getProfile = await axios.get(`${APIFunPayUrls.GET_PROFILE}${littleInfo.id}/`);
         const profileData = getProfile.data;
 
         const hasRating = profileData.match(/<span class="big">(.*)<\/span>/g);
@@ -58,12 +32,12 @@ class FunPayProfile {
         const hasReviews = profileData.match(/<div class="text-mini text-light mb5">(.*)<\/div>/g);
         const totalReviews = hasReviews ? +hasReviews[0].match(/>(.*?)</)[1].match(/\d+/)[0] : 0;
 
+        const avatarPhoto = profileData.match(/<div class="avatar-photo" style="background-image: url\((.*)\);"><\/div>/g)[0].match(/url\((.*)\)/g)[0].replace(/url\(|\)/g, '');
+
         return {
-            id,
-            link,
-            name,
-            avatarPhoto: profileData.match(/<div class="avatar-photo" style="background-image: url\((.*)\);"><\/div>/g)[0].match(/url\((.*)\)/g)[0].replace(/url\(|\)/g, ''),
-            rating: rating,
+            id: littleInfo.id,
+            link, name: littleInfo.name,
+            avatarPhoto, rating: rating,
             totalReviews: totalReviews
         };
     };
@@ -74,13 +48,13 @@ class FunPayProfile {
         * @returns {Promise<number>} Unread messages
     **/
     public async getUnreadMessages(): Promise<number> {
-        const tokenValid = await this.isTokenValid();
+        const tokenValid = await isTokenValid(this.token);
         if (!tokenValid)
             throw new Error('Invalid token');
 
-        const { data } = await axios.get(APIFunPayUrls.getIdProfile, {
+        const { data } = await axios.get(APIFunPayUrls.GET_ID_PROFILE, {
             headers: {
-                ...this.headers
+                Cookie: `golden_key=${this.token}`
             }
         });
         
@@ -95,13 +69,13 @@ class FunPayProfile {
         * @returns {Promise<number>} Balance
     **/
     public async getBalance(): Promise<number> {
-        const tokenValid = await this.isTokenValid();
+        const tokenValid = await isTokenValid(this.token);
         if (!tokenValid)
             throw new Error('Invalid token');
 
-        const { data } = await axios.get(APIFunPayUrls.getBalance, {
+        const { data } = await axios.get(APIFunPayUrls.GET_BALANCE, {
             headers: {
-                ...this.headers
+                Cookie: `golden_key=${this.token}`
             }
         });
 
