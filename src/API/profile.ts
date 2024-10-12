@@ -26,8 +26,8 @@ class FunPayProfile {
         const getProfile = await axios.get(`${APIFunPayUrls.GET_PROFILE}${littleInfo.id}/`);
         const profileData = getProfile.data;
 
-        const hasRating = profileData.match(/<span class="big">(.*)<\/span>/g);
-        const rating = hasRating ? +hasRating[0].match(/>(.*)</)[1][0] : 0;
+        const hasRating = profileData.match(/<span class="big">(.*)<\/span>/g)[0].match(/>(.*)</)[1];
+        const rating = parseFloat(hasRating) ? parseFloat(hasRating) : 0;
 
         const hasReviews = profileData.match(/<div class="text-mini text-light mb5">(.*)<\/div>/g);
         const totalReviews = hasReviews ? +hasReviews[0].match(/>(.*?)</)[1].match(/\d+/)[0] : 0;
